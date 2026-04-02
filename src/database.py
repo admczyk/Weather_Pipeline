@@ -1,24 +1,45 @@
 import pandas as pd
-from sqlalchemy import create_engine
-import psycopg2
+from sqlalchemy import create_engine, Column, Integer, Float, DateTime
+from sqlalchemy.orm import declarative_base, Session
+from config import WeatherConfiguration
+
+Base = declarative_base()
+
+class WeatherDatabase(Base):
+    __tablename__ = "weather_database"
+
+    date = Column(DateTime, primary_key=True)
+    weather_code = Column(Integer, nullable=False)
+    max_temperature = Column(Float, nullable=False)
+    min_temperature = Column(Float, nullable=False)
+    max_apparent_temperature = Column(Float, nullable=False)
+    min_apparent_temperature = Column(Float, nullable=False)
+    rain_sum = Column(Float, nullable=False)
+    snowfall_sum = Column(Float, nullable=False)
 
 def create_database():
-    engine = create_engine('postgresql+psycopg2://user:password@127.0.0.1:5432/weather_database')
-    return engine
+    try:
+        engine = create_engine(f"{WeatherConfiguration.DATABASE_URL}")
+        Base.metadata.create_all(engine)
+        return engine
+    except Exception as e:
+        print("Unexpected {e}")
 
 def load_data_to_database(df):
     engine = create_database()
 
-    engine.connect()
-    #df.to_sql("weather_data", engine, if_exists="replace", index=False)
+    df["date"] = pd.to_datetime(df["date"])
+
+    existing_dates = pd.read_sql("SELECT date FROM weather_database", Session(engine).bind)
+    existing_dates_set = set(existing_dates["date"])
+
+    new_df = df[~df["date"].isin(existing_dates_set)]
+    if not new_df.empty:
+        new_df.to_sql("weather_database", engine, if_exists="append", index=False)
 
 def main():
-    df = pd.read_csv("transformed_weather_past_data.csv", encoding="cp1250")
-    # print(df.head())
-    # print(df.dtypes)
+    df = pd.read_csv("transformed_weather_forecast_data.csv")
     load_data_to_database(df)
-    #print(create_database())
-    pass
 
 if __name__ == "__main__":
     main()
