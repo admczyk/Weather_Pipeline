@@ -36,8 +36,8 @@ def main():
     transformed_weather_forecast = transform_data(data_weather_forecast)
     transformed_weather_past = transform_data(data_weather_past)
 
-    transformed_weather_forecast.to_csv("transformed_weather_forecast_data.csv", index=False)
-    transformed_weather_past.to_csv("transformed_weather_past_data.csv", index=False)
+    transformed_weather_forecast.to_csv("transformed_weather_forecast_data.csv", index=False, encoding="utf-8")
+    transformed_weather_past.to_csv("transformed_weather_past_data.csv", index=False, encoding="utf-8")
 
 if __name__ == "__main__":
     main()

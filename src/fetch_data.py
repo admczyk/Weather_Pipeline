@@ -10,12 +10,8 @@ def fetch_past_weather_data(latitude, longitude, past_days) -> dict:
             "weather_code,"
             "temperature_2m_max,temperature_2m_min,"
             "apparent_temperature_max,apparent_temperature_min,"
-            "daylight_duration,"
             "sunset,sunrise,"
-            "uv_index_max,"
-            "rain_sum,snowfall_sum,"
-            "wind_speed_10m_max,"
-            "sunshine_duration"
+            "rain_sum,snowfall_sum"
         f"&past_days={past_days}"
         "&forecast_days=0"
         )
@@ -38,12 +34,8 @@ def fetch_weather_forecast_data(latitude, longitude, forecast_days) -> dict:
             "weather_code,"
             "temperature_2m_max,temperature_2m_min,"
             "apparent_temperature_max,apparent_temperature_min,"
-            "daylight_duration,"
             "sunset,sunrise,"
-            "uv_index_max,"
-            "rain_sum,snowfall_sum,"
-            "wind_speed_10m_max,"
-            "sunshine_duration"
+            "rain_sum,snowfall_sum"
         f"&forecast_days={forecast_days}"
         )
     response = requests.get(url)
@@ -58,11 +50,11 @@ def fetch_weather_forecast_data(latitude, longitude, forecast_days) -> dict:
 
 def main():
     #ZAPISUJE DANE DO PLIKU JSON
-    with open("./src/past_weather_data.json", "w") as file:
-        json.dump(fetch_past_weather_data(52.52, 13.41, 92), file, indent=4)
+    with open("weather_past_data.json", "w") as file:
+        json.dump(fetch_past_weather_data(52.13, 21.00, 92), file, indent=4)
 
-    with open("./src/weather_forecast_data.json", "w") as file:
-        json.dump(fetch_weather_forecast_data(52.52, 13.41, 92), file, indent=4)
+    with open("weather_forecast_data.json", "w") as file:
+        json.dump(fetch_weather_forecast_data(52.13, 21.00, 16), file, indent=4)
 
 if __name__ == "__main__":
     main()
